@@ -14,7 +14,7 @@ spec:
         image: microservice-speaker:latest
         ports:
           - containerPort: 9080
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
             path: /speaker/nessProbe
@@ -26,7 +26,6 @@ spec:
           mountPath: /etc/wlp/config/truststore
         - name: liberty-config
           mountPath: /config/configDropins
-        imagePullPolicy: Never
       volumes:
       - name: keystore
         secret:
