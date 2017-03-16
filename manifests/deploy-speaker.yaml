@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice-speaker-sample
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: speaker-deployment
+    spec:
+      containers:
+      - name: microservice-speaker
+        image: microservice-speaker:latest
+        ports:
+          - containerPort: 9080
+        imagePullPolicy: Never
+        readinessProbe:
+          httpGet:
+            path: /speaker/nessProbe
+            port: 9080
+        volumeMounts:
+        - name: keystore
+          mountPath: /etc/wlp/config/keystore
+        - name: truststore
+          mountPath: /etc/wlp/config/truststore
+        - name: liberty-config
+          mountPath: /config/configDropins
+        imagePullPolicy: Never
+      volumes:
+      - name: keystore
+        secret:
+          secretName: wlp-keystore
+      - name: truststore
+        secret:
+          secretName: wlp-truststore
+      - name: liberty-config
+        configMap:
+          name: liberty-config
+          items:
+            - key: keystore.xml
+              path: defaults/keystore.xml
+            - key: logging.xml
+              path: defaults/logging.xml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speaker-service
+  namespace: default
+spec:
+  ports:
+    - port: 9080
+  selector:
+    name: speaker-deployment
