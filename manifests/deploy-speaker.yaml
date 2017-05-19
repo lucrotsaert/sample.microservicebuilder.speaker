@@ -15,6 +15,17 @@ spec:
         ports:
           - containerPort: 9080
         imagePullPolicy: IfNotPresent
+        env:
+          - name: MB_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mb-keystore-password
+                key: password
+          - name: MB_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mb-truststore-password
+                key: password
         readinessProbe:
           httpGet:
             path: /speaker/nessProbe
@@ -29,10 +40,10 @@ spec:
       volumes:
       - name: keystore
         secret:
-          secretName: wlp-keystore
+          secretName: mb-keystore
       - name: truststore
         secret:
-          secretName: wlp-truststore
+          secretName: mb-truststore
       - name: liberty-config
         configMap:
           name: liberty-config
