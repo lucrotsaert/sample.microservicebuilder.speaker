@@ -1,7 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: microservice-speaker-sample
+  name: {{ template "fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   replicas: 1
   template:
@@ -13,7 +15,7 @@ spec:
     spec:
       containers:
       - name: microservice-speaker
-        image: microservice-speaker:latest
+        image: {{ default "microservice-speaker:latest" .Values.image }}
         ports:
           - containerPort: 9080
         imagePullPolicy: IfNotPresent
@@ -37,6 +39,7 @@ spec:
               secretKeyRef:
                 name: mb-truststore-password
                 key: password
+{{ end }}
         readinessProbe:
           httpGet:
             path: /speaker/nessProbe
@@ -47,6 +50,7 @@ spec:
             port: 9080
           initialDelaySeconds: 120
           periodSeconds: 15
+{{ if ne .Values.test true }}
         volumeMounts:
         - name: keystore
           mountPath: /etc/wlp/config/keystore
@@ -69,6 +73,7 @@ spec:
               path: defaults/keystore.xml
             - key: logging.xml
               path: defaults/logging.xml
+{{ end }}
 ---
 apiVersion: v1
 kind: Service
