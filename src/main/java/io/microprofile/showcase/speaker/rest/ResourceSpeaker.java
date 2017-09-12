@@ -16,8 +16,10 @@
 package io.microprofile.showcase.speaker.rest;
 
 
-import io.microprofile.showcase.speaker.model.Speaker;
-import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,10 +35,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Set;
+
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+
+import io.microprofile.showcase.speaker.model.Speaker;
+import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 
 /**
  * The Speaker resource
@@ -54,6 +58,8 @@ public class ResourceSpeaker {
     private UriInfo uriInfo;
 
     @GET
+    @Timed
+    @Counted(name="io.microprofile.showcase.speaker.rest.monotonic.retrieveAll.absolute(true)",monotonic = true)
     public Collection<Speaker> retrieveAll() {
         final Collection<Speaker> speakers = this.speakerDAO.getSpeakers();
 
@@ -66,6 +72,7 @@ public class ResourceSpeaker {
     @GET
     @Path("/nessProbe")
     @Produces(MediaType.TEXT_PLAIN)
+    @Counted(monotonic = true)
     public Response nessProbe() throws Exception {
 
         return Response.ok("speaker ready at " + Calendar.getInstance().getTime()).build();
@@ -73,17 +80,20 @@ public class ResourceSpeaker {
 
     @POST
     @Path("/add")
+    @Counted(monotonic = true)
     public Speaker add(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.persist(speaker));
     }
 
     @DELETE
     @Path("/remove/{id}")
+    @Counted(monotonic = true)
     public void remove(@PathParam("id") final String id) {
         this.speakerDAO.remove(id);
     }
 
     @PUT
+    @Counted(monotonic = true)
     @Path("/update")
     public Speaker update(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.update(speaker));
@@ -91,12 +101,14 @@ public class ResourceSpeaker {
 
     @GET
     @Path("/retrieve/{id}")
+    @Counted(monotonic = true)
     public Speaker retrieve(@PathParam("id") final String id) {
         return this.addHyperMedia(this.speakerDAO.getSpeaker(id).orElse(new Speaker()));
     }
 
     @PUT
     @Path("/search")
+    @Counted(monotonic = true)
     public Set<Speaker> search(final Speaker speaker) {
         final Set<Speaker> speakers = this.speakerDAO.find(speaker);
 

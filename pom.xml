@@ -32,6 +32,11 @@
         <id>jitpack.io</id>
         <url>https://jitpack.io</url>
       </repository>
+        <repository>
+            <id>liberty-starter-maven-repo</id>
+            <name>liberty-starter-maven-repo</name>
+            <url>http://liberty-app-accelerator.wasdev.developer.ibm.com/start/api/v1/repo</url>
+        </repository>
     </repositories>
 
     <properties>
@@ -155,6 +160,13 @@
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <version>2.2.5</version>
             <scope>test</scope>
+        </dependency>
+		<dependency>
+            <groupId>net.wasdev.wlp.starters.ms-builder</groupId>
+            <artifactId>metrics</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
