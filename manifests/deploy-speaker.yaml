@@ -8,6 +8,8 @@ spec:
     metadata:
       labels:
         name: speaker-deployment
+      annotations:
+        prometheus.io.scrape: "true"
     spec:
       containers:
       - name: microservice-speaker
