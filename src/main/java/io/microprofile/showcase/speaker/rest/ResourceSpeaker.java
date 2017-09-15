@@ -37,6 +37,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import io.microprofile.showcase.speaker.model.Speaker;
@@ -49,6 +51,7 @@ import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/")
+@Metered(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.Type.Metered")
 public class ResourceSpeaker {
 
     @Inject
@@ -59,6 +62,7 @@ public class ResourceSpeaker {
 
     @GET
     @Timed
+    @Metric
     @Counted(name="io.microprofile.showcase.speaker.rest.monotonic.retrieveAll.absolute(true)",monotonic = true)
     public Collection<Speaker> retrieveAll() {
         final Collection<Speaker> speakers = this.speakerDAO.getSpeakers();
