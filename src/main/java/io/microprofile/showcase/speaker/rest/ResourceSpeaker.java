@@ -51,7 +51,7 @@ import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/")
-@Metered(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.Type.Metered")
+@Metered(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.Type.Metered",tags="app=speaker")
 public class ResourceSpeaker {
 
     @Inject
@@ -63,7 +63,7 @@ public class ResourceSpeaker {
     @GET
     @Timed
     @Metric
-    @Counted(name="io.microprofile.showcase.speaker.rest.monotonic.retrieveAll.absolute(true)",monotonic = true)
+    @Counted(name="io.microprofile.showcase.speaker.rest.monotonic.retrieveAll.absolute(true)",monotonic = true,tags="app=speaker")
     public Collection<Speaker> retrieveAll() {
         final Collection<Speaker> speakers = this.speakerDAO.getSpeakers();
 
@@ -76,7 +76,7 @@ public class ResourceSpeaker {
     @GET
     @Path("/nessProbe")
     @Produces(MediaType.TEXT_PLAIN)
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     public Response nessProbe() throws Exception {
 
         return Response.ok("speaker ready at " + Calendar.getInstance().getTime()).build();
@@ -84,20 +84,20 @@ public class ResourceSpeaker {
 
     @POST
     @Path("/add")
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     public Speaker add(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.persist(speaker));
     }
 
     @DELETE
     @Path("/remove/{id}")
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     public void remove(@PathParam("id") final String id) {
         this.speakerDAO.remove(id);
     }
 
     @PUT
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     @Path("/update")
     public Speaker update(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.update(speaker));
@@ -105,14 +105,14 @@ public class ResourceSpeaker {
 
     @GET
     @Path("/retrieve/{id}")
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     public Speaker retrieve(@PathParam("id") final String id) {
         return this.addHyperMedia(this.speakerDAO.getSpeaker(id).orElse(new Speaker()));
     }
 
     @PUT
     @Path("/search")
-    @Counted(monotonic = true)
+    @Counted(monotonic = true,tags="app=speaker")
     public Set<Speaker> search(final Speaker speaker) {
         final Set<Speaker> speakers = this.speakerDAO.find(speaker);
 
