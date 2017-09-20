@@ -21,7 +21,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Set;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -47,7 +47,7 @@ import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 /**
  * The Speaker resource
  */
-@RequestScoped
+@ApplicationScoped
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/")
