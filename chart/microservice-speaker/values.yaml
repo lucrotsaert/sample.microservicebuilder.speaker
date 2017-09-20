@@ -1,1 +1,4 @@
+image:
+  repository: "microservice-speaker"
+  tag: "latest"
 test: false
