@@ -16,6 +16,8 @@
 package io.microprofile.showcase.speaker.rest;
 
 
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Collection;
@@ -31,6 +33,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,6 +44,7 @@ import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
+import io.microprofile.showcase.speaker.health.HealthCheckBean;
 import io.microprofile.showcase.speaker.model.Speaker;
 import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 
@@ -59,6 +63,8 @@ public class ResourceSpeaker {
 
     @Context
     private UriInfo uriInfo;
+    private @Inject HealthCheckBean healthCheckBean;
+    
 
     @GET
     @Timed
@@ -120,6 +126,17 @@ public class ResourceSpeaker {
 
         return speakers;
     }
+
+    
+    @POST
+    @Path("/updateHealthStatus")
+    @Produces(TEXT_PLAIN)
+    @Consumes(TEXT_PLAIN)
+    @Counted(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.updateHealthStatus.monotonic.absolute(true)",monotonic=true,absolute=true,tags="app=vote")
+    public void updateHealthStatus(@QueryParam("isAppDown") Boolean isAppDown) {
+    	healthCheckBean.setIsAppDown(isAppDown);
+    }
+
 
     private Speaker addHyperMedia(final Speaker s) {
 

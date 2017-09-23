@@ -18,6 +18,7 @@ package io.microprofile.showcase.speaker.rest;
 import io.microprofile.showcase.speaker.domain.ProducerVenue;
 import io.microprofile.showcase.speaker.domain.Venue;
 import io.microprofile.showcase.speaker.domain.VenueJavaOne2016;
+import io.microprofile.showcase.speaker.health.HealthCheckBean;
 import io.microprofile.showcase.speaker.model.Speaker;
 import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -58,6 +59,7 @@ public class ResourceSpeakerTest {
                 .addClasses(
                         SpeakerDAO.class,
                         ResourceSpeaker.class,
+                        HealthCheckBean.class,
                         Application.class,
                         Venue.class,
                         VenueJavaOne2016.class,
