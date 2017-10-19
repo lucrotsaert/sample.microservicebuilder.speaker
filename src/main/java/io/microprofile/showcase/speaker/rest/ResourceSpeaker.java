@@ -16,10 +16,14 @@
 package io.microprofile.showcase.speaker.rest;
 
 
-import io.microprofile.showcase.speaker.model.Speaker;
-import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
-import javax.enterprise.context.RequestScoped;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -29,22 +33,29 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Set;
+
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.Metric;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+
+import io.microprofile.showcase.speaker.health.HealthCheckBean;
+import io.microprofile.showcase.speaker.model.Speaker;
+import io.microprofile.showcase.speaker.persistence.SpeakerDAO;
 
 /**
  * The Speaker resource
  */
-@RequestScoped
+@ApplicationScoped
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/")
+@Metered(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.Type.Metered",tags="app=speaker")
 public class ResourceSpeaker {
 
     @Inject
@@ -52,8 +63,13 @@ public class ResourceSpeaker {
 
     @Context
     private UriInfo uriInfo;
+    private @Inject HealthCheckBean healthCheckBean;
+    
 
     @GET
+    @Timed
+    @Metric
+    @Counted(name="io.microprofile.showcase.speaker.rest.monotonic.retrieveAll.absolute(true)",monotonic = true,tags="app=speaker")
     public Collection<Speaker> retrieveAll() {
         final Collection<Speaker> speakers = this.speakerDAO.getSpeakers();
 
@@ -66,6 +82,7 @@ public class ResourceSpeaker {
     @GET
     @Path("/nessProbe")
     @Produces(MediaType.TEXT_PLAIN)
+    @Counted(monotonic = true,tags="app=speaker")
     public Response nessProbe() throws Exception {
 
         return Response.ok("speaker ready at " + Calendar.getInstance().getTime()).build();
@@ -73,17 +90,20 @@ public class ResourceSpeaker {
 
     @POST
     @Path("/add")
+    @Counted(monotonic = true,tags="app=speaker")
     public Speaker add(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.persist(speaker));
     }
 
     @DELETE
     @Path("/remove/{id}")
+    @Counted(monotonic = true,tags="app=speaker")
     public void remove(@PathParam("id") final String id) {
         this.speakerDAO.remove(id);
     }
 
     @PUT
+    @Counted(monotonic = true,tags="app=speaker")
     @Path("/update")
     public Speaker update(final Speaker speaker) {
         return this.addHyperMedia(this.speakerDAO.update(speaker));
@@ -91,12 +111,14 @@ public class ResourceSpeaker {
 
     @GET
     @Path("/retrieve/{id}")
+    @Counted(monotonic = true,tags="app=speaker")
     public Speaker retrieve(@PathParam("id") final String id) {
         return this.addHyperMedia(this.speakerDAO.getSpeaker(id).orElse(new Speaker()));
     }
 
     @PUT
     @Path("/search")
+    @Counted(monotonic = true,tags="app=speaker")
     public Set<Speaker> search(final Speaker speaker) {
         final Set<Speaker> speakers = this.speakerDAO.find(speaker);
 
@@ -104,6 +126,17 @@ public class ResourceSpeaker {
 
         return speakers;
     }
+
+    
+    @POST
+    @Path("/updateHealthStatus")
+    @Produces(TEXT_PLAIN)
+    @Consumes(TEXT_PLAIN)
+    @Counted(name="io.microprofile.showcase.speaker.rest.ResourceSpeaker.updateHealthStatus.monotonic.absolute(true)",monotonic=true,absolute=true,tags="app=vote")
+    public void updateHealthStatus(@QueryParam("isAppDown") Boolean isAppDown) {
+    	healthCheckBean.setIsAppDown(isAppDown);
+    }
+
 
     private Speaker addHyperMedia(final Speaker s) {
 
