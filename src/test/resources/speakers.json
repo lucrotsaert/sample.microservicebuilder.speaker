@@ -772,13 +772,5 @@
   "picture" : "assets/images/unknown.jpg",
   "twitterHandle" : null,
   "links" : { }
-},{
-  "id" : "100",
-  "nameFirst" : "Luc",
-  "nameLast" : "Rotsaert",
-  "organization" : null,
-  "biography" : "Luc always says : a good conversation is not far away",
-  "picture" : "https://www.google.co.uk/search?q=luc+rotsaert&dcr=0&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjvzuPhkeTYAhWLFCwKHcdrCpsQ_AUICigB&biw=1440&bih=735#imgrc=qBKk6c6-0s4RiM:",
-  "twitterHandle" : null,
-  "links" : {}
-} ]
+}
+]

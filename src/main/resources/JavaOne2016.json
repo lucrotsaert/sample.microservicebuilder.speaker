@@ -772,13 +772,5 @@
   "picture" : "assets/images/unknown.jpg",
   "twitterHandle" : null,
   "links" : { }
-},{
-  "id" : "100",
-  "nameFirst" : "Luc",
-  "nameLast" : "Rotsaert",
-  "organization" : null,
-  "biography" : "Luc always says : a good conversation is not far away",
-  "picture" : "https://media.licdn.com/mpr/mpr/shrinknp_200_200/p/4/000/142/304/25581da.jpg",
-  "twitterHandle" : null,
-  "links" : {}
-}]
+}
+]
